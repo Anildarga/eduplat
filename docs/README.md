@@ -1,8 +1,128 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EduPlat - Educational Platform
 
-## Getting Started
+A modern, full-featured educational platform built with Next.js 16, MongoDB, and Prisma. This platform supports course creation, video management, quizzes, user authentication, and role-based access control (student, instructor, admin).
 
-First, run the development server:
+## Features
+
+- **User Authentication**: Email/password, Google OAuth, GitHub OAuth with NextAuth.js
+- **Role-Based Access**: Student, Instructor, and Admin roles
+- **Course Management**: Create, edit, publish, and delete courses
+- **Video Management**: Upload, reorder, edit, and delete videos within courses
+- **Quiz System**: Create quizzes with multiple-choice questions, track results
+- **Progress Tracking**: Track video watch progress and quiz completion
+- **Certificate Generation**: Generate certificates upon course completion
+- **Responsive UI**: Built with Tailwind CSS, fully responsive
+- **File Uploads**: Support for course thumbnails and video thumbnails
+- **Email Notifications**: Password reset, email verification via Resend
+
+## Tech Stack
+
+- **Frontend**: Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS
+- **Backend**: Next.js API Routes, NextAuth.js
+- **Database**: MongoDB (via Prisma ORM)
+- **Authentication**: NextAuth.js (JWT sessions)
+- **Email**: Resend
+- **Deployment**: Vercel (recommended)
+
+## Prerequisites
+
+- Node.js 18+ and npm/yarn/pnpm/bun
+- MongoDB Atlas account (or local MongoDB)
+- Google OAuth credentials (for Google login)
+- GitHub OAuth credentials (for GitHub login)
+- Resend API key (for email functionality)
+
+## Quick Start
+
+### 1. Clone the repository
+
+```bash
+git clone <your-repo-url>
+cd eduplat
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+# or
+bun install
+```
+
+### 3. Set up environment variables
+
+The project already contains a `.env` file with placeholder values. You need to replace these placeholders with your own credentials.
+
+Open the `.env` file and update the following variables:
+
+```env
+# Database
+DATABASE_URL="mongodb+srv://username:password@cluster.mongodb.net/eduplat?retryWrites=true&w=majority"
+
+# JWT
+JWT_SECRET="your-super-secret-jwt-key-change-in-production-minimum-32-chars"
+JWT_EXPIRES_IN="7d"
+JWT_REFRESH_SECRET="your-refresh-secret-key-change-in-production-minimum-32-chars"
+JWT_REFRESH_EXPIRES_IN="30d"
+
+# OAuth
+GOOGLE_CLIENT_ID="your-google-client-id"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
+GITHUB_CLIENT_ID="your-github-client-id"
+GITHUB_CLIENT_SECRET="your-github-client-secret"
+
+# App
+NODE_ENV="development"
+PORT=3001
+FRONTEND_URL="http://localhost:3000"
+
+# NextAuth
+NEXTAUTH_SECRET="your-nextauth-secret"
+NEXTAUTH_URL="http://localhost:3000"
+
+# Email Service (Resend)
+RESEND_API_KEY="your-resend-api-key"
+RESEND_FROM_EMAIL="onboarding@resend.dev"
+```
+
+**Important**: Replace all placeholder values with your actual credentials. The existing `.env` file already contains sample values that you must update.
+
+### 4. Set up the database
+
+This project uses MongoDB with Prisma. Ensure your `DATABASE_URL` points to a valid MongoDB instance (MongoDB Atlas recommended).
+
+#### Install Prisma CLI and client (if not already installed)
+
+The project uses Prisma ORM. If you haven't installed Prisma globally, you can use `npx`:
+
+```bash
+npx prisma generate
+npx prisma db push
+```
+
+If you encounter file lock errors on Windows, close all Node processes and delete `node_modules/.prisma/client` before retrying.
+
+### 5. Seed the database with test data (optional)
+
+Run the seed script to create test users, courses, and videos:
+
+```bash
+node prisma/seed.js
+```
+
+Alternatively, if you have `tsx` installed, you can run the TypeScript seed:
+
+```bash
+npx tsx prisma/seed.ts
+```
+
+**Note**: The seed script requires `bcryptjs` and `@prisma/client`. Ensure these dependencies are installed (they are included in the project).
+
+### 6. Run the development server
 
 ```bash
 npm run dev
@@ -14,23 +134,110 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Test Credentials
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+After seeding, you can log in with the following accounts:
 
-## Learn More
+| Role       | Email                   | Password    |
+|------------|-------------------------|-------------|
+| Instructor | `instructor@test.com`   | `password123` |
+| Admin      | `admin@test.com`        | `admin123`    |
+| Student    | `student@test.com`      | `student123`  |
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+eduplat/
+├── app/                    # Next.js app router pages
+│   ├── api/               # API routes
+│   ├── admin/             # Admin pages
+│   ├── instructor/        # Instructor dashboard
+│   ├── courses/           # Public course pages
+│   ├── learn/             # Student learning interface
+│   └── (auth)/            # Authentication pages
+├── components/            # Reusable React components
+├── lib/                   # Utility functions (auth, db, email)
+├── prisma/                # Prisma schema and seed
+├── public/                # Static assets
+├── scripts/               # Helper scripts
+├── types/                 # TypeScript type definitions
+└── docs/                  # Documentation
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Available Scripts
 
-## Deploy on Vercel
+- `npm run dev` – Start development server
+- `npm run build` – Build for production
+- `npm run start` – Start production server
+- `npm run lint` – Run ESLint
+- `node prisma/seed.js` – Seed database with test data (run after database setup)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Deploy to Vercel (Recommended)
+
+1. Push your code to a Git repository (GitHub, GitLab, Bitbucket).
+2. Import the project into Vercel.
+3. Add environment variables in the Vercel project settings.
+4. Deploy.
+
+The `next.config.ts` is already configured for Vercel deployment.
+
+### Environment Variables on Vercel
+
+Ensure all environment variables from `.env` are added to your Vercel project settings.
+
+### Database Considerations
+
+For production, use a dedicated MongoDB Atlas cluster with appropriate security settings (IP whitelisting, database users). Update the `DATABASE_URL` accordingly.
+
+## Troubleshooting
+
+### Authentication Issues
+
+- Ensure `NEXTAUTH_SECRET` is set and matches between environments.
+- Verify OAuth credentials are correct and redirect URIs are configured.
+- Restart the dev server after changing environment variables.
+
+### Database Connection Errors
+
+- Check that `DATABASE_URL` is correct and the MongoDB cluster is accessible.
+- Ensure network access is allowed from your IP (in MongoDB Atlas).
+- Run `npx prisma db push` to ensure schema is synchronized.
+
+### File Upload Issues
+
+- Check that the `public/uploads` directory exists and is writable.
+- Verify file size limits in `next.config.ts`.
+
+### Windows-Specific Issues
+
+- If `prisma generate` fails with EPERM, close all terminals and delete `node_modules/.prisma/client` manually.
+- Use PowerShell or WSL for better compatibility.
+
+## Contributing
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Commit your changes.
+4. Push to the branch.
+5. Open a pull request.
+
+## License
+
+This project is licensed under the MIT License.
+
+## Acknowledgments
+
+- Built with [Next.js](https://nextjs.org)
+- Authentication by [NextAuth.js](https://next-auth.js.org)
+- Database ORM by [Prisma](https://prisma.io)
+- Styling with [Tailwind CSS](https://tailwindcss.com)
+- Icons from [Lucide React](https://lucide.dev)
+- Deployment on [Vercel](https://vercel.com)
+
+## Support
+
+For issues and questions, please open an issue on the GitHub repository.
