@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Send email to admin
-    const { error } = await resend.emails.send({
+    const emailOptions = {
       from: process.env.RESEND_FROM_EMAIL || 'noreply@eduplat.com',
       to: 'anildarga3777@gmail.com',
       subject: `Eduplat Contact Form Submission from ${name}`,
@@ -36,7 +36,10 @@ export async function POST(req: NextRequest) {
         </div>
       `,
       replyTo: email,
-    })
+    };
+    
+    // Type assertion to handle Resend type definition inconsistencies
+    const { error } = await resend.emails.send(emailOptions as any)
 
     if (error) {
       console.error('[contact] Failed to send email:', error)
